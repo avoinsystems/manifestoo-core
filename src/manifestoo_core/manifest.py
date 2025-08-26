@@ -60,6 +60,12 @@ def _check_dict_of_list_of_str(value: Any) -> Dict[str, List[str]]:
     return _check_dict(value, key_checker=_check_str, value_checker=_check_list_of_str)
 
 
+def _check_external_dependencies(value: Any) -> Dict[str, List[str]]:
+    # TODO: temporary ignore apt dependencies
+    value.pop("apt", None)
+    return _check_dict(value, key_checker=_check_str, value_checker=_check_list_of_str)
+
+
 def get_manifest_path(addon_dir: Path) -> Optional[Path]:
     """Get the path to the manifest file for an addon directory.
 
@@ -124,9 +130,10 @@ class Manifest:
     @property
     def external_dependencies(self) -> Dict[str, List[str]]:
         """The value of the external_dependencies field if set, else {}."""
+        
         return self._get(
             "external_dependencies",
-            _check_dict_of_list_of_str,
+            _check_external_dependencies,
             default={},
         )
 
